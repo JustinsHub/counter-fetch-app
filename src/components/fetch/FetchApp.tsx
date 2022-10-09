@@ -1,15 +1,39 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 
 const FetchApp:React.FC = () => {
+    const BASE_URL = process.env.DOG_API_URL || 'https://dog.ceo/api/breeds/image/random'
 
-    //find api
-    //useEffect to render api on first render
-    //put in a state and render that state
+    const [apiData, setApiData] = useState()
+    const [isError, setIsError] = useState('')
+
+    useEffect(() => {
+        const fetchApiData = async() => {
+            try {
+                const data = await (await fetch(BASE_URL)).json()
+                setApiData(() => data.message)
+                // console.log(apiData)
+            } catch (error) {
+                setIsError(() => error as string)
+            }
+        }
+        fetchApiData()
+    }, [BASE_URL])
 
     return (
-        <div>
-            
-        </div>
+        <section>
+            <div>
+                Today's dog is...
+            </div>
+                {!isError ?
+                <div>
+                    <img src={apiData} alt="dog api response"/>
+                </div>
+                :
+                <div>  
+                    {isError}
+                </div>
+                }
+        </section>
     )
 }
 
